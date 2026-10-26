@@ -76,9 +76,9 @@ svg.venn *{pointer-events:none}
 .lbl-name{font-family:var(--serif);fill:var(--ink)}
 .tile-rect{fill:none;stroke:var(--ink);stroke-width:1}
 .tile-bg{fill:var(--field);stroke:var(--ink);stroke-width:1}
-.tile-more{fill:var(--ink)}
-.tile-q{font-family:var(--serif);fill:var(--ink)}
-.tile-n{font-family:var(--mono);font-size:11px;fill:var(--paper)}
+.tile-n{font-family:var(--mono);font-size:11px;font-weight:500;letter-spacing:.04em;fill:var(--ink)}
+.tile-txt{font-family:var(--serif);fill:var(--ink)}
+.tile-txt.light,.tile-n.light{fill:var(--paper)}
 
 .tip{
   position:absolute;left:0;top:0;pointer-events:none;
@@ -314,16 +314,17 @@ footer.foot{display:flex;justify-content:space-between;align-items:center;gap:16
   };
   const LABEL_SIZE = 31;
 
-  // Caixa onde as miniaturas aparecem dentro de cada área
+  // Caixa onde o conteúdo aparece dentro de cada área:
+  // centro (x,y), largura, altura, lado da foto (s), corpo do texto (ts) e máximo de linhas por texto (ml)
   const SLOT = {
-    a:   { x:290, y:275, w:130, h:120, s:36 },
-    b:   { x:730, y:275, w:130, h:120, s:36 },
-    c:   { x:510, y:612, w:170, h:96,  s:36 },
-    ab:  { x:510, y:220, w:90,  h:66,  s:26 },
-    ac:  { x:385, y:455, w:90,  h:78,  s:26 },
-    bc:  { x:635, y:455, w:90,  h:78,  s:26 },
-    abc: { x:510, y:375, w:90,  h:66,  s:26 },
-    d:   { x:950, y:642, w:150, h:124, s:36 }
+    a:   { x:293, y:268, w:150, h:160, s:46, ts:16, ml:3 },
+    b:   { x:727, y:268, w:150, h:160, s:46, ts:16, ml:3 },
+    c:   { x:510, y:618, w:230, h:116, s:46, ts:16, ml:3 },
+    ab:  { x:510, y:215, w:112, h:80,  s:34, ts:14, ml:2 },
+    ac:  { x:383, y:455, w:100, h:90,  s:34, ts:14, ml:2 },
+    bc:  { x:637, y:455, w:100, h:90,  s:34, ts:14, ml:2 },
+    abc: { x:510, y:375, w:100, h:80,  s:34, ts:14, ml:2, light:true },
+    d:   { x:950, y:640, w:160, h:150, s:46, ts:16, ml:3 }
   };
 
   /* ---------- Estado ---------- */
@@ -547,60 +548,122 @@ footer.foot{display:flex;justify-content:space-between;align-items:center;gap:16
     select(k && k === sel ? null : k);
   });
 
-  // Calcula a posição das miniaturas de uma área (usado na tela e na imagem exportada)
-  function tileLayout(k) {
+  // Quebra um texto em linhas que caibam na largura; corta com reticências após maxLines
+  function wrapText(text, size, width, maxLines) {
+    mctx.font = '400 ' + size + 'px ' + SERIF;
+    const m = t => mctx.measureText(t).width;
+    const words = text.replace(/\s+/g, ' ').trim().split(' ');
+    const lines = [];
+    let cur = '';
+    for (const w of words) {
+      const test = cur ? cur + ' ' + w : w;
+      if (m(test) <= width) { cur = test; continue; }
+      if (cur) lines.push(cur);
+      cur = w;
+      while (m(cur) > width && cur.length > 1) {
+        let i = cur.length - 1;
+        while (i > 1 && m(cur.slice(0, i)) > width) i--;
+        lines.push(cur.slice(0, i));
+        cur = cur.slice(i);
+      }
+    }
+    if (cur) lines.push(cur);
+    if (lines.length > maxLines) {
+      lines.length = maxLines;
+      let last = lines[maxLines - 1];
+      while (last.length && m(last + '…') > width) last = last.slice(0, -1).trimEnd();
+      lines[maxLines - 1] = last + '…';
+    }
+    return lines;
+  }
+
+  // Distribui fotos e textos de uma área (usado na tela e na imagem exportada).
+  // Fotos vêm primeiro, em fileiras; depois os textos. O que não couber vira "+n itens".
+  function regionLayout(k) {
     const list = itemsOf(k);
     if (!list.length) return [];
-    const { x, y, w, h: hh, s: sz } = SLOT[k];
-    const gap = 4;
-    const maxCols = Math.max(1, Math.floor((w + gap) / (sz + gap)));
-    const maxRows = Math.max(1, Math.floor((hh + gap) / (sz + gap)));
-    const cap = maxCols * maxRows;
-    const shown = list.length <= cap ? list : list.slice(0, cap - 1);
-    const more = list.length - shown.length;
-    const n = shown.length + (more ? 1 : 0);
-    const cols = Math.min(n, maxCols);
-    const rows = Math.ceil(n / cols);
-    const y0 = y - (rows * sz + (rows - 1) * gap) / 2;
-    const cells = [];
-    for (let i = 0; i < n; i++) {
-      const r = Math.floor(i / cols), c = i % cols;
-      const inRow = r < rows - 1 ? cols : n - cols * (rows - 1);
-      cells.push({
-        x: x - (inRow * sz + (inRow - 1) * gap) / 2 + c * (sz + gap),
-        y: y0 + r * (sz + gap),
-        s: sz,
-        kind: i === shown.length ? 'more' : shown[i].type,
-        item: shown[i],
-        more
-      });
+    const S = SLOT[k];
+    const gap = 5, tgap = 7, moreH = 14;
+    const lh = S.ts * 1.17;
+    const imgs = list.filter(i => i.type === 'image');
+    const txts = list.filter(i => i.type === 'text');
+    const cols = Math.max(1, Math.floor((S.w + gap) / (S.s + gap)));
+    const spaceBefore = (blocks, type) => !blocks.length ? 0
+      : type === 'row' ? gap : blocks[blocks.length - 1].t === 'row' ? gap + 2 : tgap;
+
+    function attempt(H) {
+      const blocks = [];
+      let used = 0, shown = 0, rows = 0;
+      const maxRows = txts.length ? Math.max(1, Math.floor((H * 0.55 + gap) / (S.s + gap))) : Infinity;
+      for (let i = 0; i < imgs.length && rows < maxRows; i += cols) {
+        const sp = spaceBefore(blocks, 'row');
+        if (used + sp + S.s > H) break;
+        const row = imgs.slice(i, i + cols);
+        used += sp + S.s;
+        blocks.push({ t:'row', items:row, h:S.s });
+        shown += row.length; rows++;
+      }
+      for (const it of txts) {
+        const sp = spaceBefore(blocks, 'text');
+        const avail = H - used - sp;
+        const fit = Math.min(S.ml, Math.floor((avail - S.ts) / lh) + 1);
+        if (fit < 1) break;
+        const lines = wrapText(it.text, S.ts, S.w, fit);
+        const hgt = S.ts + (lines.length - 1) * lh;
+        used += sp + hgt;
+        blocks.push({ t:'text', lines, h:hgt });
+        shown++;
+      }
+      return { blocks, used, shown };
     }
-    return cells;
+
+    let r = attempt(S.h);
+    let hidden = list.length - r.shown;
+    if (hidden > 0) { r = attempt(S.h - moreH - gap); hidden = list.length - r.shown; }
+
+    const total = r.used + (hidden ? (r.blocks.length ? gap : 0) + moreH : 0);
+    let y = S.y - total / 2;
+    const out = [];
+    r.blocks.forEach((b, i) => {
+      y += spaceBefore(r.blocks.slice(0, i), b.t);
+      if (b.t === 'row') {
+        const rowW = b.items.length * S.s + (b.items.length - 1) * gap;
+        b.items.forEach((it, j) => out.push({ kind:'image', x: S.x - rowW / 2 + j * (S.s + gap), y, s:S.s, item:it }));
+      } else {
+        out.push({ kind:'text', x:S.x, light:!!S.light, lines:b.lines, size:S.ts, ys: b.lines.map((_, j) => y + S.ts * 0.8 + j * lh) });
+      }
+      y += b.h;
+    });
+    if (hidden) {
+      y += r.blocks.length ? gap : 0;
+      out.push({ kind:'more', x:S.x, light:!!S.light, y: y + 11, n:hidden });
+    }
+    return out;
   }
 
   function renderTiles() {
     const g = $('#tiles');
     g.replaceChildren();
     for (const k of ORDER) {
-      for (const c of tileLayout(k)) {
-        const t = s('g');
-        if (c.kind === 'more') {
-          t.append(s('rect', { class:'tile-more', x:c.x, y:c.y, width:c.s, height:c.s }));
-          const tn = s('text', { class:'tile-n', x:c.x + c.s / 2, y:c.y + c.s / 2 + 4, 'text-anchor':'middle' });
-          tn.textContent = '+' + c.more;
-          t.append(tn);
-        } else if (c.kind === 'image') {
+      for (const c of regionLayout(k)) {
+        if (c.kind === 'image') {
+          const t = s('g');
           t.append(s('rect', { class:'tile-bg', x:c.x, y:c.y, width:c.s, height:c.s }));
           const im = s('image', { x:c.x, y:c.y, width:c.s, height:c.s, preserveAspectRatio:'xMidYMid slice' });
           im.setAttribute('href', c.item.src);
           t.append(im, s('rect', { class:'tile-rect', x:c.x, y:c.y, width:c.s, height:c.s }));
+          g.append(t);
+        } else if (c.kind === 'text') {
+          c.lines.forEach((ln, j) => {
+            const t = s('text', { class:'tile-txt' + (c.light ? ' light' : ''), x:c.x, y:c.ys[j], 'text-anchor':'middle', 'font-size':c.size });
+            t.textContent = ln;
+            g.append(t);
+          });
         } else {
-          t.append(s('rect', { class:'tile-bg', x:c.x, y:c.y, width:c.s, height:c.s }));
-          const q = s('text', { class:'tile-q', x:c.x + c.s / 2, y:c.y + c.s * 0.86, 'text-anchor':'middle', 'font-size':c.s * 1.15 });
-          q.textContent = '“';
-          t.append(q);
+          const t = s('text', { class:'tile-n' + (c.light ? ' light' : ''), x:c.x, y:c.y, 'text-anchor':'middle' });
+          t.textContent = '+' + plural(c.n);
+          g.append(t);
         }
-        g.append(t);
       }
     }
     svg.querySelectorAll('.reg').forEach(r => {
@@ -914,7 +977,7 @@ footer.foot{display:flex;justify-content:space-between;align-items:center;gap:16
       } catch {}
 
       // carrega as imagens usadas nas miniaturas
-      const cells = ORDER.flatMap(k => tileLayout(k));
+      const cells = ORDER.flatMap(k => regionLayout(k));
       const imgs = new Map();
       await Promise.all(cells.filter(c => c.kind === 'image').map(async c => {
         if (imgs.has(c.item.src)) return;
@@ -922,7 +985,7 @@ footer.foot{display:flex;justify-content:space-between;align-items:center;gap:16
         catch { imgs.set(c.item.src, null); }
       }));
 
-      const PAD = 60, SC = 2;
+      const PAD = 60, SC = 3;
       const W = VB.w + PAD * 2;
       const tc = document.createElement('canvas').getContext('2d');
 
@@ -990,20 +1053,10 @@ footer.foot{display:flex;justify-content:space-between;align-items:center;gap:16
       circle('d', RD); ctx.stroke();
       ctx.restore();
 
-      // miniaturas
+      // fotos e textos de cada área
       ctx.lineWidth = 1;
+      ctx.textAlign = 'center';
       for (const c of cells) {
-        if (c.kind === 'more') {
-          ctx.fillStyle = COLORS.ink;
-          ctx.fillRect(c.x, c.y, c.s, c.s);
-          setFont(ctx, '400 11px ' + MONO);
-          ctx.fillStyle = COLORS.paper;
-          ctx.textAlign = 'center';
-          ctx.fillText('+' + c.more, c.x + c.s / 2, c.y + c.s / 2 + 4);
-          continue;
-        }
-        ctx.fillStyle = COLORS.field;
-        ctx.fillRect(c.x, c.y, c.s, c.s);
         if (c.kind === 'image') {
           const im = imgs.get(c.item.src);
           if (im) {
@@ -1015,14 +1068,18 @@ footer.foot{display:flex;justify-content:space-between;align-items:center;gap:16
             ctx.fillStyle = COLORS.paper2;
             ctx.fillRect(c.x, c.y, c.s, c.s);
           }
+          ctx.strokeStyle = COLORS.ink;
+          ctx.lineWidth = 1;
+          ctx.strokeRect(c.x + 0.5, c.y + 0.5, c.s - 1, c.s - 1);
+        } else if (c.kind === 'text') {
+          setFont(ctx, '400 ' + c.size + 'px ' + SERIF);
+          ctx.fillStyle = c.light ? COLORS.paper : COLORS.ink;
+          c.lines.forEach((ln, j) => ctx.fillText(ln, c.x, c.ys[j]));
         } else {
-          setFont(ctx, '400 ' + (c.s * 1.15) + 'px ' + SERIF);
-          ctx.fillStyle = COLORS.ink;
-          ctx.textAlign = 'center';
-          ctx.fillText('“', c.x + c.s / 2, c.y + c.s * 0.86);
+          setFont(ctx, '500 11px ' + MONO, '0.5px');
+          ctx.fillStyle = c.light ? COLORS.paper : COLORS.ink;
+          ctx.fillText('+' + plural(c.n), c.x, c.y);
         }
-        ctx.strokeStyle = COLORS.ink;
-        ctx.strokeRect(c.x + 0.5, c.y + 0.5, c.s - 1, c.s - 1);
       }
 
       // rótulos dos círculos
@@ -1122,7 +1179,7 @@ footer.foot{display:flex;justify-content:space-between;align-items:center;gap:16
     editing = !remote;
     render();
     // reajusta os rótulos quando as fontes terminarem de carregar
-    if (document.fonts && document.fonts.ready) document.fonts.ready.then(renderSvgLabels);
+    if (document.fonts && document.fonts.ready) document.fonts.ready.then(() => { renderTiles(); renderSvgLabels(); });
   })();
 })();
 </script>
