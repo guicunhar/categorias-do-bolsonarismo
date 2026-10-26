@@ -202,7 +202,6 @@ footer.foot{display:flex;justify-content:space-between;align-items:center;gap:16
   <header class="top">
     <h1 id="title">Categorias do <em>Bolsonarismo</em></h1>
     <div class="meta mono">
-      <span>Diagrama de Venn</span>
       <span id="m-count">0 itens</span>
       <span id="m-date"></span>
     </div>
@@ -936,9 +935,6 @@ footer.foot{display:flex;justify-content:space-between;align-items:center;gap:16
 
   function renderMeta() {
     $('#m-count').textContent = plural(state.items.length);
-    $('#m-date').textContent = state.updated
-      ? 'Atualizado em ' + new Date(state.updated).toLocaleDateString('pt-BR')
-      : '';
     $('#edit-toggle').textContent = editing ? 'Concluir edição' : 'Editar';
   }
 
@@ -1028,7 +1024,6 @@ footer.foot{display:flex;justify-content:space-between;align-items:center;gap:16
       setFont(ctx, '400 12px ' + MONO, '0.8px');
       ctx.fillStyle = COLORS.ink2;
       const date = new Date(state.updated || Date.now()).toLocaleDateString('pt-BR');
-      ctx.fillText(('Diagrama de Venn  ·  ' + date).toUpperCase(), PAD, metaBase);
       ctx.fillStyle = COLORS.ink;
       ctx.fillRect(PAD, ruleY, W - PAD * 2, 1);
 
