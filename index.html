@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Categorias do Bolsonarismo</title>
-<meta name="description" content="Diagrama de Venn: Déficit Cognitivo, Mau-Caráter, Ressentido e Indiferença Política.">
+<meta name="description" content="Diagrama de Venn interativo.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
@@ -44,7 +44,8 @@ header.top{
 }
 h1{
   font-family:var(--serif);font-weight:400;
-  font-size:clamp(46px,7.4vw,104px);line-height:.9;letter-spacing:-.015em;margin:0;
+  font-size:clamp(46px,7.4vw,104px);line-height:.92;letter-spacing:-.015em;margin:0;
+  overflow-wrap:anywhere;
 }
 h1 em{font-style:italic}
 .meta{display:flex;flex-wrap:wrap;gap:6px 22px;padding-bottom:8px}
@@ -72,7 +73,7 @@ svg.venn *{pointer-events:none}
 .ol{fill:none;stroke:var(--ink);stroke-width:1.3}
 .ol.dash{stroke-dasharray:3 6;stroke-linecap:round;stroke-width:1.5}
 .lbl-code{font-family:var(--mono);font-size:13px;letter-spacing:.1em;fill:var(--ink-2)}
-.lbl-name{font-family:var(--serif);font-size:31px;fill:var(--ink)}
+.lbl-name{font-family:var(--serif);fill:var(--ink)}
 .tile-rect{fill:none;stroke:var(--ink);stroke-width:1}
 .tile-bg{fill:var(--field);stroke:var(--ink);stroke-width:1}
 .tile-more{fill:var(--ink)}
@@ -89,7 +90,7 @@ svg.venn *{pointer-events:none}
 .tip.on{opacity:1}
 
 /* Índice */
-.index-h{margin-top:18px;padding-bottom:8px}
+.index-h{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-top:18px;padding-bottom:10px}
 .index{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));border-top:1px solid var(--ink)}
 .idx{
   appearance:none;background:none;border:0;border-bottom:1px solid var(--rule);
@@ -97,14 +98,14 @@ svg.venn *{pointer-events:none}
   display:flex;flex-direction:column;gap:3px;min-width:0;
 }
 .idx .code{font-family:var(--mono);font-size:11px;letter-spacing:.06em;color:var(--ink-2);display:flex;justify-content:space-between;gap:8px}
-.idx .nm{font-size:14px;line-height:1.25}
+.idx .nm{font-size:14px;line-height:1.25;overflow-wrap:anywhere}
 .idx:hover .nm{text-decoration:underline;text-underline-offset:3px;text-decoration-thickness:1px}
 .idx.on{border-bottom:2px solid var(--ink);padding-bottom:11px}
 .idx.on .nm{font-weight:600}
 .idx:focus-visible{outline:2px solid var(--ink);outline-offset:2px}
 
 /* Painel */
-.panel h2{font-family:var(--serif);font-weight:400;font-size:38px;line-height:1.02;margin:8px 0 0;letter-spacing:-.005em}
+.panel h2{font-family:var(--serif);font-weight:400;font-size:38px;line-height:1.02;margin:8px 0 0;letter-spacing:-.005em;overflow-wrap:anywhere}
 .panel p{margin:0}
 .lede{font-size:16px;color:var(--ink-2);margin-top:12px !important;max-width:34ch}
 .muted{color:var(--ink-2)}
@@ -112,6 +113,18 @@ svg.venn *{pointer-events:none}
 
 .toolbar{border:1px solid var(--ink);padding:12px 14px;margin-bottom:24px;background:var(--field)}
 .toolbar .row{display:flex;flex-wrap:wrap;gap:8px;margin:10px 0}
+
+.labels{border-top:1px solid var(--rule);margin-top:12px;padding-top:10px}
+.labels summary{cursor:pointer;list-style:none;font-family:var(--mono);font-size:12px;letter-spacing:.06em;text-transform:uppercase;color:var(--ink)}
+.labels summary::-webkit-details-marker{display:none}
+.labels summary::before{content:'+';display:inline-block;width:16px}
+.labels[open] summary::before{content:'\2013'}
+.fld{margin-top:10px}
+.fld label{display:block;font-family:var(--mono);font-size:10.5px;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-2);margin-bottom:4px}
+.fld input{padding:6px 8px;font-size:13.5px}
+.fld .hint{font-size:12px;color:var(--ink-2);margin-top:4px}
+.labels .sub{margin-top:16px;padding-top:10px;border-top:1px dashed var(--rule)}
+.pair{display:grid;grid-template-columns:1fr 1fr;gap:0 10px}
 
 .btn{
   appearance:none;font-family:var(--mono);font-size:11.5px;letter-spacing:.06em;text-transform:uppercase;
@@ -123,14 +136,16 @@ svg.venn *{pointer-events:none}
 .btn.solid:hover{background:transparent;color:var(--ink)}
 .btn.quiet{border-color:transparent;padding-left:0;padding-right:0;text-decoration:underline;text-underline-offset:3px}
 .btn.quiet:hover{background:none;color:var(--b)}
-.btn:focus-visible,input:focus-visible,textarea:focus-visible,select:focus-visible{outline:2px solid var(--ink);outline-offset:2px}
+.btn[disabled]{opacity:.5;cursor:progress}
+.btn:focus-visible,input:focus-visible,textarea:focus-visible,select:focus-visible,summary:focus-visible{outline:2px solid var(--ink);outline-offset:2px}
 
 input[type=text],input[type=url],textarea,select{
   font:inherit;font-size:14px;color:var(--ink);background:var(--field);
   border:1px solid var(--rule);border-radius:0;padding:8px 10px;width:100%;
 }
+.toolbar input[type=text]{background:#fff}
 textarea{resize:vertical;min-height:84px;line-height:1.45}
-select{width:auto;padding:5px 8px;font-size:12.5px}
+select{width:auto;padding:5px 8px;font-size:12.5px;max-width:100%}
 
 .add{border:1px dashed var(--ink-2);padding:14px;margin-top:20px;transition:background .12s}
 .add.drag{background:var(--paper-2);border-style:solid}
@@ -185,7 +200,7 @@ footer.foot{display:flex;justify-content:space-between;align-items:center;gap:16
 
 <div class="wrap">
   <header class="top">
-    <h1>Categorias do <em>Bolsonarismo</em></h1>
+    <h1 id="title">Categorias do <em>Bolsonarismo</em></h1>
     <div class="meta mono">
       <span>Diagrama de Venn</span>
       <span id="m-count">0 itens</span>
@@ -195,8 +210,8 @@ footer.foot{display:flex;justify-content:space-between;align-items:center;gap:16
 
   <main class="grid">
     <section class="stage" id="stage">
-      <svg class="venn" id="venn" viewBox="30 70 1060 730" role="img" aria-labelledby="venn-t">
-        <title id="venn-t">Diagrama de Venn com três conjuntos sobrepostos — Déficit Cognitivo, Mau-Caráter e Ressentido — e o conjunto Indiferença Política à parte.</title>
+      <svg class="venn" id="venn" viewBox="30 40 1060 775" role="img" aria-labelledby="venn-t">
+        <title id="venn-t">Diagrama de Venn</title>
         <defs>
           <pattern id="hatch" width="7" height="7" patternUnits="userSpaceOnUse" patternTransform="rotate(45)">
             <rect width="7" height="7" fill="rgba(28,27,24,.05)"/>
@@ -235,21 +250,14 @@ footer.foot{display:flex;justify-content:space-between;align-items:center;gap:16
         </g>
 
         <g id="tiles"></g>
-
-        <g>
-          <text class="lbl-code" x="270" y="104" text-anchor="end">A</text>
-          <text class="lbl-name" x="270" y="137" text-anchor="end">Déficit Cognitivo</text>
-          <text class="lbl-code" x="750" y="104">B</text>
-          <text class="lbl-name" x="750" y="137">Mau-Caráter</text>
-          <text class="lbl-code" x="510" y="738" text-anchor="middle">C</text>
-          <text class="lbl-name" x="510" y="770" text-anchor="middle">Ressentido</text>
-          <text class="lbl-code" x="950" y="482" text-anchor="middle">D</text>
-          <text class="lbl-name" x="950" y="514" text-anchor="middle">Indiferença Política</text>
-        </g>
+        <g id="labels"></g>
       </svg>
       <div class="tip" id="tip"></div>
 
-      <div class="index-h mono">Índice das áreas</div>
+      <div class="index-h">
+        <span class="mono">Índice das áreas</span>
+        <button class="btn" id="png-btn" type="button">Baixar imagem</button>
+      </div>
       <nav class="index" id="index" aria-label="Áreas do diagrama"></nav>
     </section>
 
@@ -257,7 +265,7 @@ footer.foot{display:flex;justify-content:space-between;align-items:center;gap:16
   </main>
 
   <footer class="foot">
-    <span class="mono">Categorias do Bolsonarismo</span>
+    <span class="mono" id="foot-title">Categorias do Bolsonarismo</span>
     <button class="btn quiet" id="edit-toggle" type="button">Editar</button>
   </footer>
 </div>
@@ -274,23 +282,39 @@ footer.foot{display:flex;justify-content:space-between;align-items:center;gap:16
 (() => {
   'use strict';
 
-  /* ---------- Geometria e áreas ---------- */
+  /* ---------- Geometria ---------- */
   const R = 210, RD = 110;
   const CENTER = { a:[400,310], b:[620,310], c:[510,500], d:[950,640] };
-
-  const REG = {
-    a:   { code:'A',         name:'Déficit Cognitivo' },
-    b:   { code:'B',         name:'Mau-Caráter' },
-    c:   { code:'C',         name:'Ressentido' },
-    ab:  { code:'A ∩ B',     name:'Déficit Cognitivo e Mau-Caráter' },
-    ac:  { code:'A ∩ C',     name:'Déficit Cognitivo e Ressentido' },
-    bc:  { code:'B ∩ C',     name:'Mau-Caráter e Ressentido' },
-    abc: { code:'A ∩ B ∩ C', name:'Déficit Cognitivo, Mau-Caráter e Ressentido' },
-    d:   { code:'D',         name:'Indiferença Política' }
+  const VB = { x:30, y:40, w:1060, h:775 };
+  const COLORS = {
+    paper:'#f1eee6', paper2:'#e7e3d8', field:'#faf8f3', ink:'#1c1b18', ink2:'#5a574e',
+    a:'#e2ad45', b:'#d4613f', c:'#5f84ad', d:'#bdb7aa'
   };
+  const SERIF = '"Instrument Serif", Georgia, serif';
+  const MONO = '"IBM Plex Mono", Menlo, monospace';
+
+  const CODE = { a:'A', b:'B', c:'C', ab:'A ∩ B', ac:'A ∩ C', bc:'B ∩ C', abc:'A ∩ B ∩ C', d:'D' };
   const ORDER = ['a','b','c','ab','ac','bc','abc','d'];
 
-  // Caixa onde as miniaturas aparecem dentro de cada área (centro x,y; largura; altura; lado da miniatura)
+  const DEFAULT_LABELS = {
+    title:'Categorias do *Bolsonarismo*',
+    a:'Déficit Cognitivo',
+    b:'Mau-Caráter',
+    c:'Ressentido',
+    d:'Indiferença Política'
+  };
+  const LABEL_KEYS = ['title','a','b','c','d','ab','ac','bc','abc'];
+
+  // Posição e largura máxima dos rótulos dos círculos (unidades do diagrama)
+  const LABEL_POS = {
+    a: { x:270, y:137, anchor:'end',    max:235 },
+    b: { x:750, y:137, anchor:'start',  max:330 },
+    c: { x:510, y:770, anchor:'middle', max:560 },
+    d: { x:950, y:514, anchor:'middle', max:250 }
+  };
+  const LABEL_SIZE = 31;
+
+  // Caixa onde as miniaturas aparecem dentro de cada área
   const SLOT = {
     a:   { x:290, y:275, w:130, h:120, s:36 },
     b:   { x:730, y:275, w:130, h:120, s:36 },
@@ -303,13 +327,42 @@ footer.foot{display:flex;justify-content:space-between;align-items:center;gap:16
   };
 
   /* ---------- Estado ---------- */
-  let state = { updated: 0, items: [] };
+  let state = { updated: 0, labels: {}, items: [] };
   let sel = null;
   let editing = false;
+  let labelsOpen = false;
 
   const $ = (q, el = document) => el.querySelector(q);
   const svg = $('#venn');
   const SVGNS = 'http://www.w3.org/2000/svg';
+
+  /* ---------- Rótulos ---------- */
+  function lab(k) {
+    const v = ((state.labels || {})[k] || '').trim();
+    return v || DEFAULT_LABELS[k];
+  }
+  function autoName(k) {
+    const p = k.split('').map(lab);
+    return p.length === 2 ? p[0] + ' e ' + p[1] : p[0] + ', ' + p[1] + ' e ' + p[2];
+  }
+  function name(k) {
+    if (k.length === 1) return lab(k);
+    const v = ((state.labels || {})[k] || '').trim();
+    return v || autoName(k);
+  }
+  function parseItalic(str) {
+    const out = [];
+    let last = 0;
+    str.replace(/\*([^*]+)\*/g, (m, g, i) => {
+      if (i > last) out.push({ t: str.slice(last, i), i: false });
+      out.push({ t: g, i: true });
+      last = i + m.length;
+      return m;
+    });
+    if (last < str.length) out.push({ t: str.slice(last), i: false });
+    return out;
+  }
+  const plainTitle = () => parseItalic(lab('title')).map(s => s.t).join('').trim();
 
   /* ---------- Utilitários ---------- */
   function h(tag, attrs = {}, ...kids) {
@@ -335,6 +388,7 @@ footer.foot{display:flex;justify-content:space-between;align-items:center;gap:16
   const uid = () => Date.now().toString(36) + Math.random().toString(36).slice(2, 8);
   const plural = n => n === 1 ? '1 item' : n + ' itens';
   const itemsOf = k => state.items.filter(i => i.region === k);
+  const slug = t => t.normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '') || 'diagrama';
 
   let toastTimer;
   function toast(msg) {
@@ -381,11 +435,15 @@ footer.foot{display:flex;justify-content:space-between;align-items:center;gap:16
   function sanitize(data) {
     if (!data || !Array.isArray(data.items)) throw new Error('formato');
     const items = data.items
-      .filter(i => i && REG[i.region] && (i.type === 'text' || i.type === 'image') && typeof (i.type === 'text' ? i.text : i.src) === 'string')
+      .filter(i => i && CODE[i.region] && (i.type === 'text' || i.type === 'image') && typeof (i.type === 'text' ? i.text : i.src) === 'string')
       .map(i => i.type === 'text'
         ? { id: i.id || uid(), region: i.region, type: 'text', text: i.text }
         : { id: i.id || uid(), region: i.region, type: 'image', src: i.src, caption: typeof i.caption === 'string' ? i.caption : '' });
-    return { updated: Number(data.updated) || 0, items };
+    const labels = {};
+    if (data.labels && typeof data.labels === 'object') {
+      for (const k of LABEL_KEYS) if (typeof data.labels[k] === 'string') labels[k] = data.labels[k].slice(0, 160);
+    }
+    return { updated: Number(data.updated) || 0, labels, items };
   }
 
   /* ---------- Imagens ---------- */
@@ -397,9 +455,10 @@ footer.foot{display:flex;justify-content:space-between;align-items:center;gap:16
       fr.readAsDataURL(file);
     });
   }
-  function loadImg(src) {
+  function loadImg(src, cors) {
     return new Promise((res, rej) => {
       const im = new Image();
+      if (cors && /^https?:/i.test(src)) im.crossOrigin = 'anonymous';
       im.onload = () => res(im);
       im.onerror = rej;
       im.src = src;
@@ -475,7 +534,7 @@ footer.foot{display:flex;justify-content:space-between;align-items:center;gap:16
     setHover(k);
     if (k && e.pointerType === 'mouse') {
       const r = $('#stage').getBoundingClientRect();
-      tip.textContent = REG[k].code + ' — ' + REG[k].name + ' · ' + plural(itemsOf(k).length);
+      tip.textContent = CODE[k] + ' — ' + name(k) + ' · ' + plural(itemsOf(k).length);
       tip.style.left = (e.clientX - r.left) + 'px';
       tip.style.top = (e.clientY - r.top) + 'px';
       tip.classList.add('on');
@@ -488,44 +547,57 @@ footer.foot{display:flex;justify-content:space-between;align-items:center;gap:16
     select(k && k === sel ? null : k);
   });
 
+  // Calcula a posição das miniaturas de uma área (usado na tela e na imagem exportada)
+  function tileLayout(k) {
+    const list = itemsOf(k);
+    if (!list.length) return [];
+    const { x, y, w, h: hh, s: sz } = SLOT[k];
+    const gap = 4;
+    const maxCols = Math.max(1, Math.floor((w + gap) / (sz + gap)));
+    const maxRows = Math.max(1, Math.floor((hh + gap) / (sz + gap)));
+    const cap = maxCols * maxRows;
+    const shown = list.length <= cap ? list : list.slice(0, cap - 1);
+    const more = list.length - shown.length;
+    const n = shown.length + (more ? 1 : 0);
+    const cols = Math.min(n, maxCols);
+    const rows = Math.ceil(n / cols);
+    const y0 = y - (rows * sz + (rows - 1) * gap) / 2;
+    const cells = [];
+    for (let i = 0; i < n; i++) {
+      const r = Math.floor(i / cols), c = i % cols;
+      const inRow = r < rows - 1 ? cols : n - cols * (rows - 1);
+      cells.push({
+        x: x - (inRow * sz + (inRow - 1) * gap) / 2 + c * (sz + gap),
+        y: y0 + r * (sz + gap),
+        s: sz,
+        kind: i === shown.length ? 'more' : shown[i].type,
+        item: shown[i],
+        more
+      });
+    }
+    return cells;
+  }
+
   function renderTiles() {
     const g = $('#tiles');
     g.replaceChildren();
     for (const k of ORDER) {
-      const list = itemsOf(k);
-      if (!list.length) continue;
-      const { x, y, w, h: hh, s: sz } = SLOT[k];
-      const gap = 4;
-      const maxCols = Math.max(1, Math.floor((w + gap) / (sz + gap)));
-      const maxRows = Math.max(1, Math.floor((hh + gap) / (sz + gap)));
-      const cap = maxCols * maxRows;
-      const shown = list.length <= cap ? list : list.slice(0, cap - 1);
-      const more = list.length - shown.length;
-      const n = shown.length + (more ? 1 : 0);
-      const cols = Math.min(n, maxCols);
-      const rows = Math.ceil(n / cols);
-      const y0 = y - (rows * sz + (rows - 1) * gap) / 2;
-
-      for (let i = 0; i < n; i++) {
-        const r = Math.floor(i / cols), c = i % cols;
-        const inRow = r < rows - 1 ? cols : n - cols * (rows - 1);
-        const tx = x - (inRow * sz + (inRow - 1) * gap) / 2 + c * (sz + gap);
-        const ty = y0 + r * (sz + gap);
+      for (const c of tileLayout(k)) {
         const t = s('g');
-        if (i === shown.length) {
-          t.append(s('rect', { class:'tile-more', x:tx, y:ty, width:sz, height:sz }));
-          const tn = s('text', { class:'tile-n', x:tx + sz / 2, y:ty + sz / 2 + 4, 'text-anchor':'middle' });
-          tn.textContent = '+' + more;
+        if (c.kind === 'more') {
+          t.append(s('rect', { class:'tile-more', x:c.x, y:c.y, width:c.s, height:c.s }));
+          const tn = s('text', { class:'tile-n', x:c.x + c.s / 2, y:c.y + c.s / 2 + 4, 'text-anchor':'middle' });
+          tn.textContent = '+' + c.more;
           t.append(tn);
-        } else if (shown[i].type === 'image') {
-          t.append(s('rect', { class:'tile-bg', x:tx, y:ty, width:sz, height:sz }));
-          const im = s('image', { x:tx, y:ty, width:sz, height:sz, preserveAspectRatio:'xMidYMid slice' });
-          im.setAttribute('href', shown[i].src);
-          t.append(im, s('rect', { class:'tile-rect', x:tx, y:ty, width:sz, height:sz }));
+        } else if (c.kind === 'image') {
+          t.append(s('rect', { class:'tile-bg', x:c.x, y:c.y, width:c.s, height:c.s }));
+          const im = s('image', { x:c.x, y:c.y, width:c.s, height:c.s, preserveAspectRatio:'xMidYMid slice' });
+          im.setAttribute('href', c.item.src);
+          t.append(im, s('rect', { class:'tile-rect', x:c.x, y:c.y, width:c.s, height:c.s }));
         } else {
-          t.append(s('rect', { class:'tile-bg', x:tx, y:ty, width:sz, height:sz }));
-          const q = s('text', { class:'tile-q', x:tx + sz / 2, y:ty + sz * 0.86, 'text-anchor':'middle', 'font-size':sz * 1.15 });
-          q.textContent = '\u201C';
+          t.append(s('rect', { class:'tile-bg', x:c.x, y:c.y, width:c.s, height:c.s }));
+          const q = s('text', { class:'tile-q', x:c.x + c.s / 2, y:c.y + c.s * 0.86, 'text-anchor':'middle', 'font-size':c.s * 1.15 });
+          q.textContent = '“';
           t.append(q);
         }
         g.append(t);
@@ -537,6 +609,65 @@ footer.foot{display:flex;justify-content:space-between;align-items:center;gap:16
     });
   }
 
+  // Rótulo longo: quebra em duas linhas e só reduz a fonte se ainda não couber
+  const mctx = document.createElement('canvas').getContext('2d');
+  function textW(t, size) {
+    mctx.font = '400 ' + size + 'px ' + SERIF;
+    return mctx.measureText(t).width;
+  }
+  function computeLabel(k) {
+    const p = LABEL_POS[k];
+    const text = lab(k);
+    let size = LABEL_SIZE, lines = [text];
+    if (textW(text, size) > p.max) {
+      const words = text.split(/\s+/);
+      if (words.length > 1) {
+        let best = null;
+        for (let i = 1; i < words.length; i++) {
+          const l = [words.slice(0, i).join(' '), words.slice(i).join(' ')];
+          const wmax = Math.max(textW(l[0], size), textW(l[1], size));
+          if (!best || wmax < best.w) best = { l, w: wmax };
+        }
+        lines = best.l;
+        if (best.w > p.max) size = Math.max(16, size * p.max / best.w);
+      } else {
+        size = Math.max(14, size * p.max / textW(text, size));
+      }
+    }
+    const lh = size * 1.04;
+    const up = k !== 'c';
+    const ys = lines.map((_, i) => up ? p.y - (lines.length - 1 - i) * lh : p.y + i * lh);
+    return { p, size, lines, ys, codeY: (up ? ys[0] : p.y) - size - 2 };
+  }
+
+  function renderSvgLabels() {
+    const g = $('#labels');
+    g.replaceChildren();
+    for (const k of ['a','b','c','d']) {
+      const L = computeLabel(k);
+      const code = s('text', { class:'lbl-code', x:L.p.x, y:L.codeY, 'text-anchor':L.p.anchor });
+      code.textContent = CODE[k];
+      g.append(code);
+      L.lines.forEach((ln, i) => {
+        const t = s('text', { class:'lbl-name', x:L.p.x, y:L.ys[i], 'text-anchor':L.p.anchor, 'font-size':L.size.toFixed(1) });
+        t.textContent = ln;
+        g.append(t);
+      });
+    }
+    $('#venn-t').textContent = 'Diagrama de Venn com três conjuntos sobrepostos — ' + lab('a') + ', ' + lab('b') + ' e ' + lab('c') + ' — e o conjunto ' + lab('d') + ' à parte.';
+  }
+
+  function renderLabels() {
+    const t = $('#title');
+    t.replaceChildren(...parseItalic(lab('title')).map(seg => seg.i ? h('em', {}, seg.t) : document.createTextNode(seg.t)));
+    document.title = plainTitle();
+    $('#foot-title').textContent = plainTitle();
+    renderSvgLabels();
+    renderIndex();
+    const pt = $('#p-title');
+    if (pt && sel) pt.textContent = name(sel);
+  }
+
   /* ---------- Índice ---------- */
   function renderIndex() {
     const nav = $('#index');
@@ -544,23 +675,72 @@ footer.foot{display:flex;justify-content:space-between;align-items:center;gap:16
       class: 'idx' + (k === sel ? ' on' : ''), type: 'button', 'aria-pressed': k === sel ? 'true' : 'false',
       onclick: () => select(k === sel ? null : k)
     },
-      h('span', { class:'code' }, h('span', {}, REG[k].code), h('span', {}, String(itemsOf(k).length))),
-      h('span', { class:'nm' }, REG[k].name)
+      h('span', { class:'code' }, h('span', {}, CODE[k]), h('span', {}, String(itemsOf(k).length))),
+      h('span', { class:'nm' }, name(k))
     )));
   }
 
   /* ---------- Painel ---------- */
+  function labelField(k, title, placeholder, hint) {
+    const inp = h('input', { type:'text', id:'lbl-' + k, placeholder, maxlength:'160' });
+    inp.value = (state.labels || {})[k] || '';
+    inp.addEventListener('input', () => {
+      state.labels = state.labels || {};
+      if (inp.value.trim()) state.labels[k] = inp.value; else delete state.labels[k];
+      renderLabels();
+      // atualiza os nomes automáticos das interseções enquanto se digita
+      for (const ik of ['ab','ac','bc','abc']) {
+        const f = $('#lbl-' + ik);
+        if (f) f.placeholder = autoName(ik);
+      }
+    });
+    inp.addEventListener('change', save);
+    return h('div', { class:'fld' }, h('label', { for:'lbl-' + k }, title), inp, hint ? h('div', { class:'hint' }, hint) : null);
+  }
+
+  function labelsEditor() {
+    const d = h('details', { class:'labels', open: labelsOpen },
+      h('summary', {}, 'Rótulos'),
+      labelField('title', 'Título', DEFAULT_LABELS.title, 'Use *asteriscos* para pôr um trecho em itálico.'),
+      h('div', { class:'pair' },
+        labelField('a', 'Círculo A', DEFAULT_LABELS.a),
+        labelField('b', 'Círculo B', DEFAULT_LABELS.b)
+      ),
+      h('div', { class:'pair' },
+        labelField('c', 'Círculo C', DEFAULT_LABELS.c),
+        labelField('d', 'Círculo D (à parte)', DEFAULT_LABELS.d)
+      ),
+      h('div', { class:'sub' },
+        h('div', { class:'small muted' }, 'Interseções — deixe em branco para usar o nome formado pelos círculos.'),
+        labelField('ab', 'A ∩ B', autoName('ab')),
+        labelField('ac', 'A ∩ C', autoName('ac')),
+        labelField('bc', 'B ∩ C', autoName('bc')),
+        labelField('abc', 'A ∩ B ∩ C', autoName('abc'))
+      ),
+      h('div', { class:'row' },
+        h('button', { class:'btn', type:'button', onclick: () => {
+          if (!Object.keys(state.labels || {}).length) return;
+          if (!confirm('Voltar todos os rótulos ao texto original?')) return;
+          state.labels = {}; save(); render(); toast('Rótulos restaurados.');
+        } }, 'Restaurar padrão')
+      )
+    );
+    d.addEventListener('toggle', () => { labelsOpen = d.open; });
+    return d;
+  }
+
   function toolbar() {
     return h('div', { class:'toolbar' },
       h('div', { class:'mono' }, 'Modo de edição'),
       h('div', { class:'row' },
         h('button', { class:'btn solid', type:'button', onclick: exportData }, 'Exportar dados.json'),
         h('button', { class:'btn', type:'button', onclick: () => $('#import-file').click() }, 'Importar'),
-        h('button', { class:'btn', type:'button', onclick: clearAll }, 'Limpar tudo'),
+        h('button', { class:'btn', type:'button', onclick: clearAll }, 'Limpar conteúdo'),
         h('button', { class:'btn', type:'button', onclick: () => setEditing(false) }, 'Concluir')
       ),
       h('p', { class:'small muted' },
-        'O conteúdo fica salvo neste navegador. Para que apareça no site publicado, exporte e envie o arquivo dados.json para a mesma pasta do index.html no repositório.')
+        'O conteúdo fica salvo neste navegador. Para que apareça no site publicado, exporte e envie o arquivo dados.json para a mesma pasta do index.html no repositório.'),
+      labelsEditor()
     );
   }
 
@@ -615,7 +795,7 @@ footer.foot{display:flex;justify-content:space-between;align-items:center;gap:16
   function itemCard(it) {
     const card = h('article', { class:'item ' + it.type });
     if (it.type === 'image') {
-      const img = h('img', { src: it.src, alt: it.caption || REG[it.region].name, loading:'lazy' });
+      const img = h('img', { src: it.src, alt: it.caption || name(it.region), loading:'lazy' });
       img.addEventListener('click', () => openLb(it));
       img.addEventListener('error', () => { img.alt = 'Imagem indisponível'; img.style.minHeight = '80px'; });
       card.append(img);
@@ -646,10 +826,10 @@ footer.foot{display:flex;justify-content:space-between;align-items:center;gap:16
 
     if (editing) {
       const mv = h('select', { 'aria-label':'Mover para outra área' },
-        ORDER.map(k => h('option', { value:k, selected: k === it.region }, REG[k].code + ' — ' + REG[k].name)));
+        ORDER.map(k => h('option', { value:k, selected: k === it.region }, CODE[k] + ' — ' + name(k))));
       mv.addEventListener('change', () => {
         it.region = mv.value; save(); render();
-        toast('Movido para ' + REG[mv.value].name + '.');
+        toast('Movido para ' + name(mv.value) + '.');
       });
       card.append(h('div', { class:'tools' },
         h('span', { class:'mono' }, 'Mover'), mv,
@@ -680,8 +860,8 @@ footer.foot{display:flex;justify-content:space-between;align-items:center;gap:16
 
     const list = itemsOf(sel);
     p.append(
-      h('div', { class:'mono' }, REG[sel].code + ' · ' + plural(list.length)),
-      h('h2', {}, REG[sel].name)
+      h('div', { class:'mono' }, CODE[sel] + ' · ' + plural(list.length)),
+      h('h2', { id:'p-title' }, name(sel))
     );
     if (editing) p.append(addForm());
     if (!list.length) {
@@ -701,7 +881,7 @@ footer.foot{display:flex;justify-content:space-between;align-items:center;gap:16
 
   function render() {
     renderTiles();
-    renderIndex();
+    renderLabels();
     renderPanel();
     renderMeta();
   }
@@ -715,9 +895,170 @@ footer.foot{display:flex;justify-content:space-between;align-items:center;gap:16
   }
   function setEditing(v) { editing = v; render(); }
 
-  /* ---------- Exportar / importar ---------- */
+  /* ---------- Exportar como imagem (PNG) ---------- */
+  function setFont(ctx, f, spacing) {
+    ctx.font = f;
+    if ('letterSpacing' in ctx) ctx.letterSpacing = spacing || '0px';
+  }
+
+  async function exportPNG() {
+    const btn = $('#png-btn');
+    btn.disabled = true;
+    toast('Gerando imagem…');
+    try {
+      try {
+        await Promise.all([
+          '400 32px "Instrument Serif"', 'italic 400 32px "Instrument Serif"',
+          '400 13px "IBM Plex Mono"'
+        ].map(f => document.fonts.load(f)));
+      } catch {}
+
+      // carrega as imagens usadas nas miniaturas
+      const cells = ORDER.flatMap(k => tileLayout(k));
+      const imgs = new Map();
+      await Promise.all(cells.filter(c => c.kind === 'image').map(async c => {
+        if (imgs.has(c.item.src)) return;
+        try { imgs.set(c.item.src, await loadImg(c.item.src, true)); }
+        catch { imgs.set(c.item.src, null); }
+      }));
+
+      const PAD = 60, SC = 2;
+      const W = VB.w + PAD * 2;
+      const tc = document.createElement('canvas').getContext('2d');
+
+      // título: reduz a fonte se não couber na largura
+      const segs = parseItalic(lab('title'));
+      let tSize = 64;
+      const measure = size => segs.reduce((sum, sg) => {
+        setFont(tc, (sg.i ? 'italic ' : '') + '400 ' + size + 'px ' + SERIF, '-0.6px');
+        return sum + tc.measureText(sg.t).width;
+      }, 0);
+      const tw = measure(tSize);
+      if (tw > VB.w) tSize = Math.max(24, tSize * VB.w / tw);
+
+      const titleBase = PAD + tSize * 0.78;
+      const metaBase = titleBase + 34;
+      const ruleY = metaBase + 20;
+      const diagTop = ruleY + 16;
+      const H = Math.ceil(diagTop + VB.h + PAD * 0.6);
+
+      const cv = document.createElement('canvas');
+      cv.width = W * SC; cv.height = H * SC;
+      const ctx = cv.getContext('2d');
+      ctx.scale(SC, SC);
+
+      ctx.fillStyle = COLORS.paper;
+      ctx.fillRect(0, 0, W, H);
+
+      // título
+      let x = PAD;
+      ctx.fillStyle = COLORS.ink;
+      ctx.textAlign = 'left';
+      ctx.textBaseline = 'alphabetic';
+      for (const sg of segs) {
+        setFont(ctx, (sg.i ? 'italic ' : '') + '400 ' + tSize + 'px ' + SERIF, '-0.6px');
+        ctx.fillText(sg.t, x, titleBase);
+        x += ctx.measureText(sg.t).width;
+      }
+
+      // linha de informações e régua
+      setFont(ctx, '400 12px ' + MONO, '0.8px');
+      ctx.fillStyle = COLORS.ink2;
+      const date = new Date(state.updated || Date.now()).toLocaleDateString('pt-BR');
+      ctx.fillText(('Diagrama de Venn  ·  ' + date).toUpperCase(), PAD, metaBase);
+      ctx.fillStyle = COLORS.ink;
+      ctx.fillRect(PAD, ruleY, W - PAD * 2, 1);
+
+      // diagrama
+      ctx.save();
+      ctx.translate(PAD - VB.x, diagTop - VB.y);
+
+      const circle = (k, r) => { ctx.beginPath(); ctx.arc(CENTER[k][0], CENTER[k][1], r, 0, Math.PI * 2); };
+      ctx.globalCompositeOperation = 'multiply';
+      ctx.globalAlpha = 0.62;
+      for (const k of ['a','b','c']) { circle(k, R); ctx.fillStyle = COLORS[k]; ctx.fill(); }
+      ctx.globalAlpha = 0.45;
+      circle('d', RD); ctx.fillStyle = COLORS.d; ctx.fill();
+      ctx.globalAlpha = 1;
+      ctx.globalCompositeOperation = 'source-over';
+
+      ctx.strokeStyle = COLORS.ink;
+      ctx.lineWidth = 1.3;
+      for (const k of ['a','b','c']) { circle(k, R); ctx.stroke(); }
+      ctx.save();
+      ctx.lineWidth = 1.5; ctx.setLineDash([3, 6]); ctx.lineCap = 'round';
+      circle('d', RD); ctx.stroke();
+      ctx.restore();
+
+      // miniaturas
+      ctx.lineWidth = 1;
+      for (const c of cells) {
+        if (c.kind === 'more') {
+          ctx.fillStyle = COLORS.ink;
+          ctx.fillRect(c.x, c.y, c.s, c.s);
+          setFont(ctx, '400 11px ' + MONO);
+          ctx.fillStyle = COLORS.paper;
+          ctx.textAlign = 'center';
+          ctx.fillText('+' + c.more, c.x + c.s / 2, c.y + c.s / 2 + 4);
+          continue;
+        }
+        ctx.fillStyle = COLORS.field;
+        ctx.fillRect(c.x, c.y, c.s, c.s);
+        if (c.kind === 'image') {
+          const im = imgs.get(c.item.src);
+          if (im) {
+            const iw = im.naturalWidth, ih = im.naturalHeight;
+            const k = Math.max(c.s / iw, c.s / ih);
+            const sw = c.s / k, sh = c.s / k;
+            ctx.drawImage(im, (iw - sw) / 2, (ih - sh) / 2, sw, sh, c.x, c.y, c.s, c.s);
+          } else {
+            ctx.fillStyle = COLORS.paper2;
+            ctx.fillRect(c.x, c.y, c.s, c.s);
+          }
+        } else {
+          setFont(ctx, '400 ' + (c.s * 1.15) + 'px ' + SERIF);
+          ctx.fillStyle = COLORS.ink;
+          ctx.textAlign = 'center';
+          ctx.fillText('“', c.x + c.s / 2, c.y + c.s * 0.86);
+        }
+        ctx.strokeStyle = COLORS.ink;
+        ctx.strokeRect(c.x + 0.5, c.y + 0.5, c.s - 1, c.s - 1);
+      }
+
+      // rótulos dos círculos
+      const align = { start:'left', end:'right', middle:'center' };
+      for (const k of ['a','b','c','d']) {
+        const L = computeLabel(k);
+        ctx.textAlign = align[L.p.anchor];
+        setFont(ctx, '400 13px ' + MONO, '1.3px');
+        ctx.fillStyle = COLORS.ink2;
+        ctx.fillText(CODE[k], L.p.x, L.codeY);
+        setFont(ctx, '400 ' + L.size + 'px ' + SERIF);
+        ctx.fillStyle = COLORS.ink;
+        L.lines.forEach((ln, i) => ctx.fillText(ln, L.p.x, L.ys[i]));
+      }
+      ctx.restore();
+
+      const blob = await new Promise(res => cv.toBlob(res, 'image/png'));
+      if (!blob) throw new Error('blob');
+      const a = h('a', { href: URL.createObjectURL(blob), download: slug(plainTitle()) + '.png' });
+      document.body.append(a); a.click(); a.remove();
+      setTimeout(() => URL.revokeObjectURL(a.href), 2000);
+      const missing = [...imgs.values()].filter(v => !v).length;
+      toast(missing
+        ? 'Imagem gerada. ' + missing + ' foto(s) de link externo não puderam ser incluídas.'
+        : 'Imagem gerada.');
+    } catch (err) {
+      toast('Não foi possível gerar a imagem.');
+    } finally {
+      btn.disabled = false;
+    }
+  }
+  $('#png-btn').addEventListener('click', exportPNG);
+
+  /* ---------- Exportar / importar dados ---------- */
   function exportData() {
-    const blob = new Blob([JSON.stringify({ updated: state.updated || Date.now(), items: state.items })], { type:'application/json' });
+    const blob = new Blob([JSON.stringify({ updated: state.updated || Date.now(), labels: state.labels || {}, items: state.items })], { type:'application/json' });
     const a = h('a', { href: URL.createObjectURL(blob), download: 'dados.json' });
     document.body.append(a); a.click(); a.remove();
     setTimeout(() => URL.revokeObjectURL(a.href), 2000);
@@ -738,7 +1079,7 @@ footer.foot{display:flex;justify-content:space-between;align-items:center;gap:16
   });
   function clearAll() {
     if (!state.items.length) return;
-    if (!confirm('Apagar todo o conteúdo do diagrama? Esta ação não pode ser desfeita.')) return;
+    if (!confirm('Apagar todos os textos e fotos do diagrama? Os rótulos serão mantidos. Esta ação não pode ser desfeita.')) return;
     state.items = []; save(); render(); toast('Conteúdo apagado.');
   }
 
@@ -780,6 +1121,8 @@ footer.foot{display:flex;justify-content:space-between;align-items:center;gap:16
     else if (local) { try { state = sanitize(local); } catch {} }
     editing = !remote;
     render();
+    // reajusta os rótulos quando as fontes terminarem de carregar
+    if (document.fonts && document.fonts.ready) document.fonts.ready.then(renderSvgLabels);
   })();
 })();
 </script>
